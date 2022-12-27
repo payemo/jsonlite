@@ -1,0 +1,7 @@
+main
+*.o
+*~
+/x64
+
+# VS
+*.vcxproj*
