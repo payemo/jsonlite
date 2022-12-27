@@ -1,6 +1,8 @@
 #pragma once
 
 #include "types.h"
+#include "helper.h"
+#include <iostream>
 
 namespace jsonlite
 {
@@ -13,10 +15,17 @@ namespace jsonlite
     
     ~Value();
 
-    template<typename T> bool is() const;
+    bool parse(std::istream& stream);
+    bool parse(const std::string& input);
 
-    template<typename T> void
-    set(const T& value) {};
+    bool empty() const;
+
+    template<typename T> bool is() const;
+    template<typename T> T& get();
+    template<typename T> const T& get() const;
+
+    template<typename T>
+    void set(const T& value) {};
 
     void set(const String& value) {
       type = JsonType::STRING_;
@@ -84,82 +93,95 @@ namespace jsonlite
       Object* obj_value;
       Array* array_value;
     };
-    
-  private:
-    /* Numeric type definition */
-    template<typename T>
-    struct IsByte
-    {
-      static const bool value = std::is_same<T, Byte>::value;
-    };
-
-    template<typename T>
-    struct IsUByte
-    {
-      static const bool value = std::is_same<T, UByte>::value;
-    };
-
-    template<typename T>
-    struct IsInt16
-    {
-      static const bool value = std::is_same<T, Int16>::value;
-    };
-
-    template<typename T>
-    struct IsUInt16
-    {
-      static const bool value = std::is_same<T, UInt16>::value;
-    };
-
-    template<typename T>
-    struct IsInt32
-    {
-      static const bool value = std::is_same<T, Int32>::value;
-    };
-
-    template<typename T>
-    struct IsUInt32
-    {
-      static const bool value = std::is_same<T, UInt32>::value;
-    };
-
-    template<typename T>
-    struct IsInt64
-    {
-      static const bool value = std::is_same<T, Int64>::value;
-    };
-
-    template<typename T>
-    struct IsUInt64
-    {
-      static const bool value = std::is_same<T, UInt64>::value;
-    };
-
-    template<typename T>
-    struct IsDouble
-    {
-      static const bool value = std::is_same<T, Double>::value;
-    };
-
-    /* Typename specialization for JSON's String type */
-    template<class T>
-    struct IsString
-    {
-      static const bool value = std::is_same<T, String>::value || std::is_same<T, String*>::value;
-    };
-
-    /* Typename specialization for JSON's Object type */
-    template<class T>
-    struct IsObject
-    {
-      static const bool value = std::is_same<T, Object>::value || std::is_same<T, Object*>::value;
-    };
-
-    /* Typename specialization for JSON's Array type */
-    template<class T>
-    struct IsArray
-    {
-      static const bool value = std::is_same<T, Array>::value || std::is_same<T, Array*>::value;
-    };
   };
+
+  /* Numeric JSON types. */
+  template<>
+  inline bool Value::is<Number>() const { return type == JsonType::NUMBER_; }
+
+  /* Boolean JSON type. */
+  template<>
+  inline bool Value::is<Boolean>() const { return type == JsonType::BOOLEAN_; }
+
+  /* String JSON type. */
+  template<>
+  inline bool Value::is<String>() const { return type == JsonType::STRING_; }
+
+  /* Object JSON type. */
+  template<>
+  inline bool Value::is<Object>() const { return type == JsonType::OBJECT_; }
+
+  /* Array JSON type. */
+  template<>
+  inline bool Value::is<Array>() const { return type == JsonType::ARRAY_; }
+
+  /* Null JSON type. */
+  template<>
+  inline bool Value::is<Nullable>() const { return type == JsonType::NULL_; }
+
+  template<>
+  inline Value& Value::get<Value>() { return *this; }
+
+  template<>
+  inline const Value& Value::get<Value>() const { return *this; }
+
+  template<>
+  inline Number& Value::get<Number>() {
+      JSONLITE_ASSERT(is<Number>());
+      return number_value;
+  }
+
+  template<>
+  inline const Number& Value::get<Number>() const {
+      JSONLITE_ASSERT(is<Number>());
+      return number_value;
+  }
+
+  template<>
+  inline String& Value::get<String>() {
+      JSONLITE_ASSERT(is<String>());
+      return *string_value;
+  }
+
+  template<>
+  inline const String& Value::get<String>() const {
+      JSONLITE_ASSERT(is<String>());
+      return *string_value;
+  }
+
+  template<>
+  inline Boolean& Value::get<Boolean>() {
+      JSONLITE_ASSERT(is<Boolean>());
+      return bool_value;
+  }
+
+  template<>
+  inline const Boolean& Value::get<Boolean>() const {
+      JSONLITE_ASSERT(is<Boolean>());
+      return bool_value;
+  }
+
+  template<>
+  inline Array& Value::get<Array>() {
+      JSONLITE_ASSERT(is<Array>());
+      return *array_value;
+  }
+
+  template<>
+  inline const Array& Value::get<Array>() const {
+      JSONLITE_ASSERT(is<Array>());
+      return *array_value;
+  }
+
+  template<>
+  inline Object& Value::get<Object>() {
+      JSONLITE_ASSERT(is<Object>());
+      return *obj_value;
+  }
+
+  template<>
+  inline const Object& Value::get<Object>() const {
+      JSONLITE_ASSERT(is<Object>());
+      return *obj_value;
+  }
 }

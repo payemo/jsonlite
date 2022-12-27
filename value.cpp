@@ -36,30 +36,6 @@ namespace jsonlite
     }
   }
   
-  /* Numeric JSON types. */
-  template<>
-  inline bool Value::is<Number>() const { return type == JsonType::NUMBER_; }
-
-  /* Boolean JSON type. */
-  template<>
-  inline bool Value::is<bool>() const { return type == JsonType::BOOLEAN_; }
-
-  /* String JSON type. */
-  template<>
-  inline bool Value::is<String>() const { return type == JsonType::STRING_; }
-
-  /* Object JSON type. */
-  template<>
-  inline bool Value::is<Object>() const { return type == JsonType::OBJECT_; }
-
-  /* Array JSON type. */
-  template<>
-  inline bool Value::is<Array>() const { return type == JsonType::ARRAY_; }
-
-  /* Null JSON type. */
-  template<>
-  inline bool Value::is<Nullable>() const { return type == JsonType::NULL_; }
-  
   // template<typename T>
   // void Value::set(const T& value) {
   //   if(IsByte<T>::value) {
