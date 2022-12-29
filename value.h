@@ -18,6 +18,8 @@ namespace jsonlite
     bool parse(std::istream& stream);
     bool parse(const std::string& input);
 
+    void clear();
+
     bool empty() const;
 
     template<typename T> bool is() const;
@@ -93,6 +95,9 @@ namespace jsonlite
       Object* obj_value;
       Array* array_value;
     };
+
+  private:
+    static bool parse(std::istream& input, Value& value);
   };
 
   /* Numeric JSON types. */

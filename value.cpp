@@ -8,6 +8,7 @@ namespace jsonlite
 
   Value::~Value()
   {
+    clear();
   }
 
   Value::Value(const Value& other)
@@ -34,6 +35,28 @@ namespace jsonlite
 	break;
       }
     }
+  }
+
+  void Value::clear() {
+    if(type == JsonType::STRING_) {
+      delete string_value;
+      string_value = nullptr;
+    }
+    else if(type == JsonType::OBJECT_) {
+      delete obj_value;
+      obj_value = nullptr;
+    }
+    else if(type == JsonType::ARRAY_) {
+      delete array_value;
+      array_value = nullptr;
+    }
+  }
+
+  bool Value::empty() const
+  {
+    return (type == JsonType::STRING_ && string_value == nullptr) ||
+      (type == JsonType::OBJECT_ && obj_value == nullptr) ||
+      (type == JsonType::ARRAY_ && array_value == nullptr);
   }
   
   // template<typename T>
