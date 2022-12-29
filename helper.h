@@ -226,16 +226,14 @@ namespace jsonlite
 
 	// check for exponent part
 	if(!input.eof() && (ch == 'E' || ch == 'e')) {
+	  numStr += ch;
 	  // Sign always MUST be after exponent code
-	  if(input.peek() != '+' || input.peek() != '-') {
+	  if(input.peek() != '+' && input.peek() != '-') {
 	    input.seekg(rollbackPos);
 	    return false;
 	  }
-	  numStr += ch; // exponent code
-	  numStr += input.peek(); // sign
-
-	  // skip exponent code and sign
-	  input.seekg(2, input.cur);
+	  input.get(ch);
+	  numStr += ch; // sign
 
 	  // check for number afterwards.
 	  if(input.eof() || !std::isdigit(input.peek())) {

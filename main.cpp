@@ -70,5 +70,13 @@ int main() {
       TEST(helper::parse(input, n));
       TEST(n._double == 1023.1929254849277);
   }
+  {
+      string teststr("3.402823E+38");
+      stringstream input(teststr);
+      Value v;
+      Number n;
+      TEST(helper::parse(input, n));
+      TEST(n._double == 3.402823E+38);
+  }
   return 0;
 }
