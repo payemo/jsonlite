@@ -23,11 +23,11 @@ int main() {
   }
   {
       Value v;
-      string test_str("\"\\u000e\"");
+      string test_str("\"\\u000e\\u0002\"");
       string result;
       stringstream input(test_str);
       TEST(helper::parse(input, result));
-      TEST(result == "\xe");
+      TEST(result == "\xe\x2");
   }
   {
       Value v;
@@ -53,6 +53,22 @@ int main() {
       TEST(helper::parse(input, res));
       TEST(res == "test_key");
   }
-
+  // test numbers
+  {
+      string teststr("-6");
+      stringstream input(teststr);
+      Value v;
+      Number n;
+      TEST(helper::parse(input, n));
+      TEST(n._byte == -6);
+  }
+  {
+      string teststr("1023.1929254849277");
+      stringstream input(teststr);
+      Value v;
+      Number n;
+      TEST(helper::parse(input, n));
+      TEST(n._double == 1023.1929254849277);
+  }
   return 0;
 }
