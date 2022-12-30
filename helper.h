@@ -129,19 +129,19 @@ namespace jsonlite
     inline bool parse(std::istream& input, Number& value) {
       input >> std::ws;
       
-      bool isNeg = false;
       char ch(0);
+      char lastCh(0);
       // use for rolling back to initial position when something goes wrong.
       // That means that invalid input number will be skipped.
       std::streampos rollbackPos = input.tellg();
       std::string numStr;
 
       // check for sign
-      ch = input.peek();
-      if(!input.eof() && (ch == '-' || ch == '+')) {
-	isNeg = (ch == '-');
+      if(!input.eof() && (input.peek() == '-' || input.peek() == '+')) {
 	input.get(ch);
-
+	numStr += ch;
+	lastCh = ch;
+	
 	// check for next digit right after passing a sign.
 	// If no digit occurs right after a sign character
 	// then input number got invalid.
@@ -150,121 +150,57 @@ namespace jsonlite
 	  input.seekg(rollbackPos);
 	  return false;
 	}
-
-	numStr += ch;
       }
-
-      // loop through digits
-      input.get(ch);
-      while(!input.eof() && std::isdigit(ch)) {
-	numStr += ch;
+      
+      while(!input.eof() && std::isdigit((ch = input.peek()))) {
 	input.get(ch);
+	numStr += ch;
+	lastCh = ch;
       }
 
       input >> std::ws;
-      if(input.eof() || (ch == ',' || ch == '}' || ch == ']')) {
-	// For now, I assume we can be pretty sure that an integer value had been gotten,
-	// so it's needed to be parsed to appropriate type
-	// TODO: may be it can be remade more elegant.
-	long double num = 0;
-	if(isNeg) {
-	  num = std::stoll(numStr);
-	}
-	else {
-	  num = std::stoull(numStr);
-	}
-	//const auto num = isNeg ? std::stoll(numStr) : std::stoull(numStr);
-
-	if(in_range<Byte>(num)) {
-	  value._byte = static_cast<Byte>(num);
-	}
-	else if(in_range<UByte>(num)) {
-	  value._ubyte = static_cast<UByte>(num);
-	}
-	else if(in_range<Int16>(num)) {
-	  value._int_16 = static_cast<Int16>(num);
-	}
-	else if(in_range<UInt16>(num)) {
-	  value._uint_16 = static_cast<UInt16>(num);
-	}
-	else if(in_range<Int32>(num)) {
-	  value._int_32 = static_cast<Int32>(num);
-	}
-	else if(in_range<UInt32>(num)) {
-	  value._uint_32 = static_cast<UInt32>(num);
-	}
-	else if(in_range<Int64>(num)) {
-	  value._int_64 = static_cast<Int64>(num);
-	}
-	else if(in_range<UInt64>(num)) {
-	  value._uint_64 = static_cast<UInt64>(num);
-	}
-
-	// A bit messy, but input should be returned as if number has been parsed recently,
-	// so the next loop's condition will work fine.
-	if(ch == ',' || ch == '}' || ch == ']') {
-	  input.unget();
-	}
-	return true;
-      }
-
+      
       if(ch == '.') {
 	numStr += ch;
+	input.get(ch); // retrieve current input byte.
+	lastCh = ch;
 
 	input >> std::ws;
-	input.get(ch);
-	// Garantee that the next character must be a digit, invalid input otherwise.
-	if(input.eof() || !std::isdigit(ch)) {
-	  input.seekg(rollbackPos);
-	  return false;
-	}
 
-	while(!input.eof() && std::isdigit(ch)) {
-	  numStr += ch;
+	while(!input.eof() && std::isdigit((ch = input.peek()))) {
 	  input.get(ch);
+	  numStr += ch;
+	  lastCh = ch;
 	}
 
 	// check for exponent part
-	if(!input.eof() && (ch == 'E' || ch == 'e')) {
+	input.get(ch); //retrieve
+	char expSign = input.peek();
+	
+	if(!input.eof() && (ch == 'E' || ch == 'e') && (expSign == '+' || expSign == '-')) {
 	  numStr += ch;
-	  // Sign always MUST be after exponent code
-	  if(input.peek() != '+' && input.peek() != '-') {
-	    input.seekg(rollbackPos);
-	    return false;
-	  }
-	  input.get(ch);
-	  numStr += ch; // sign
+	  numStr += expSign; // sign
+	  input.get(ch); // ch = sign, so we can take next character from stream
+	  lastCh = ch;
 
-	  // check for number afterwards.
-	  if(input.eof() || !std::isdigit(input.peek())) {
-	    input.seekg(rollbackPos);
-	    return false;
-	  }
-
-	  // loop though digits
-	  input.get(ch);
-	  while(!input.eof() && std::isdigit(ch)) {
-	    numStr += ch;
+	  while(!input.eof() && std::isdigit((ch = input.peek()))) {
 	    input.get(ch);
+	    numStr += ch;
+	    lastCh = ch;
 	  }
-	}
-
-	input >> std::ws;
-	if(input.eof() || (ch == ',' || ch == '}' || ch == ']')) {
-	  std::istringstream iss(numStr);
-	  double result;
-	  iss >> result;
-	  value._double = result;
-
-	  if(ch == ',' || ch == '}' || ch == ']') {
-	    input.unget();
-	  }
-	  return true;
 	}
       }
 
-      input.seekg(rollbackPos);
-      return false;
+      input >> std::ws;
+      // we need to be sure that by parsing a number, the last character must be a digit.
+      if(input.eof() || ( (ch == ',' || ch == '}' || ch == ']') && std::isdigit(lastCh) )) {
+	value = std::stold(numStr);
+	return true;
+      }
+      else {
+	input.seekg(rollbackPos);
+	return false;
+      }
     }
 
     // inline bool parse(std::istream& input, Number& value) {

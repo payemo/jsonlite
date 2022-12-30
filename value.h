@@ -35,50 +35,55 @@ namespace jsonlite
       *string_value = value;
     }
 
-    void set(const Byte& value) {
+    void set(const Number& value) {
       type = JsonType::NUMBER_;
-      number_value._byte = static_cast<Byte>(value);
+      number_value = value;
     }
 
-    void set(const UByte& value) {
-      type = JsonType::NUMBER_;
-      number_value._ubyte = static_cast<UByte>(value);
-    }
+    // void set(const Byte& value) {
+    //   type = JsonType::NUMBER_;
+    //   number_value._byte = static_cast<Byte>(value);
+    // }
 
-    void set(const Int16& value) {
-      type = JsonType::NUMBER_;
-      number_value._int_16 = static_cast<Int16>(value);
-    }
+    // void set(const UByte& value) {
+    //   type = JsonType::NUMBER_;
+    //   number_value._ubyte = static_cast<UByte>(value);
+    // }
 
-    void set(const UInt16& value) {
-      type = JsonType::NUMBER_;
-      number_value._uint_16 = static_cast<UInt16>(value);
-    }
+    // void set(const Int16& value) {
+    //   type = JsonType::NUMBER_;
+    //   number_value._int_16 = static_cast<Int16>(value);
+    // }
 
-    void set(const Int32& value) {
-      type = JsonType::NUMBER_;
-      number_value._int_32 = static_cast<Int32>(value);
-    }
+    // void set(const UInt16& value) {
+    //   type = JsonType::NUMBER_;
+    //   number_value._uint_16 = static_cast<UInt16>(value);
+    // }
 
-    void set(const UInt32& value) {
-      type = JsonType::NUMBER_;
-      number_value._uint_32 = static_cast<UInt32>(value);
-    }
+    // void set(const Int32& value) {
+    //   type = JsonType::NUMBER_;
+    //   number_value._int_32 = static_cast<Int32>(value);
+    // }
 
-    void set(const Int64& value) {
-      type = JsonType::NUMBER_;
-      number_value._int_64 = static_cast<Int64>(value);
-    }
+    // void set(const UInt32& value) {
+    //   type = JsonType::NUMBER_;
+    //   number_value._uint_32 = static_cast<UInt32>(value);
+    // }
 
-    void set(const UInt64& value) {
-      type = JsonType::NUMBER_;
-      number_value._uint_64 = static_cast<UInt64>(value);
-    }
+    // void set(const Int64& value) {
+    //   type = JsonType::NUMBER_;
+    //   number_value._int_64 = static_cast<Int64>(value);
+    // }
 
-    void set(const Double& value) {
-      type = JsonType::NUMBER_;
-      number_value._double = static_cast<Double>(value);
-    }
+    // void set(const UInt64& value) {
+    //   type = JsonType::NUMBER_;
+    //   number_value._uint_64 = static_cast<UInt64>(value);
+    // }
+
+    // void set(const Double& value) {
+    //   type = JsonType::NUMBER_;
+    //   number_value._double = static_cast<Double>(value);
+    // }
 
     void set(const Boolean& value) {
       type = JsonType::BOOLEAN_;
