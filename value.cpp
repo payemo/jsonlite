@@ -58,6 +58,30 @@ namespace jsonlite
       (type == JsonType::OBJECT_ && obj_value == nullptr) ||
       (type == JsonType::ARRAY_ && array_value == nullptr);
   }
+
+  bool Value::parse(std::istream& input, Value& value) {
+    // value.clear();
+
+    String string_value;
+    if(parse(input, string_value)) {
+      value.set(string_value);
+      return true;
+    }
+
+    Number num_value;
+    if(parse(input, num_value)) {
+      value.set(num_value);
+      return true;
+    }
+
+    Boolean bool_value;
+    if(parse(input, bool_value)) {
+      value.set(bool_value);
+      return true;
+    }
+
+    
+  }
   
   // template<typename T>
   // void Value::set(const T& value) {

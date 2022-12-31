@@ -43,7 +43,7 @@ int main() {
 		string res;
 		stringstream input(str);
 
-		TEST(helper::parse(input, res));
+		helper::parse(input, res);
 		TEST(res == "");
 	}
 	// test numbers
@@ -83,9 +83,24 @@ int main() {
 		string teststr("4.2e+,");
 		stringstream input(teststr);
 		Value v;
-		Number n;
-		TEST(helper::parse(input, n));
-		TEST(n == 42000000);
+		Number n(-1);
+		helper::parse(input, n);
+		TEST(n == -1);
+	}
+	// parse boolean
+	{
+		string teststr("true");
+		stringstream input(teststr);
+		Boolean b;
+		TEST(helper::parse(input, b));
+		TEST(b == true);
+	}
+	{
+		string teststr("\ttrue   ");
+		stringstream input(teststr);
+		Boolean b;
+		TEST(helper::parse(input, b));
+		TEST(b == true);
 	}
 	return 0;
 }

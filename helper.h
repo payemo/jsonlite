@@ -136,20 +136,11 @@ namespace jsonlite
       std::streampos rollbackPos = input.tellg();
       std::string numStr;
 
-      // check for sign
+      // check for a sign
       if(!input.eof() && (input.peek() == '-' || input.peek() == '+')) {
 	input.get(ch);
 	numStr += ch;
 	lastCh = ch;
-	
-	// check for next digit right after passing a sign.
-	// If no digit occurs right after a sign character
-	// then input number got invalid.
-	input >> std::ws;
-	if(input.eof() || !std::isdigit(input.peek())) {
-	  input.seekg(rollbackPos);
-	  return false;
-	}
       }
       
       while(!input.eof() && std::isdigit((ch = input.peek()))) {
@@ -193,7 +184,7 @@ namespace jsonlite
 
       input >> std::ws;
       // we need to be sure that by parsing a number, the last character must be a digit.
-      if(input.eof() || ( (ch == ',' || ch == '}' || ch == ']') && std::isdigit(lastCh) )) {
+      if(input.eof() || std::isdigit(lastCh)) {
 	value = std::stold(numStr);
 	return true;
       }
@@ -201,6 +192,24 @@ namespace jsonlite
 	input.seekg(rollbackPos);
 	return false;
       }
+    }
+
+    inline bool parse(std::istream& input, Boolean& value) {
+      if(match(input, "true")) {
+	value = true;
+	return true;
+      }
+      else if(match(input, "false")) {
+	value = false;
+	return true;
+      }
+      else {
+	return false;
+      }
+    }
+
+    inline bool parse(std::istream& input) {
+      return match(input, "null");
     }
 
     // inline bool parse(std::istream& input, Number& value) {
