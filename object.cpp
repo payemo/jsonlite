@@ -83,6 +83,7 @@ namespace jsonlite
 	return false;
       }
     } while(helper::match(input, ","));
-    return true;
+
+    return helper::match(input, "}");
   }
 }

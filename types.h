@@ -16,19 +16,6 @@ namespace jsonlite
   typedef unsigned long long int UInt64;
   typedef double Double;
   
-  // union _number
-  // {
-  //   Byte _byte;
-  //   UByte _ubyte;
-  //   Int16 _int_16;
-  //   UInt16 _uint_16;
-  //   Int32 _int_32;
-  //   UInt32 _uint_32;
-  //   Int64 _int_64;
-  //   UInt64 _uint_64;
-  //   Double _double;
-  // };
-  
   /* Fast-forwarding defintion of types */
   typedef std::string String;
   typedef long double Number;
@@ -36,8 +23,4 @@ namespace jsonlite
   class Object;
   class Array;
   class Nullable{};
-
-  // TODO
-  /* Exception types */
-  //class JsonTypeException : std::runtime_exception {};
 }

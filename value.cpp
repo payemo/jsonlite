@@ -1,5 +1,6 @@
 #include "value.h"
 #include "object.h"
+#include "array.h"
 
 namespace jsonlite
 {
@@ -16,34 +17,7 @@ namespace jsonlite
   {
     clear();
     if(this != &other) {
-      switch(other.type) {
-      case JsonType::NUMBER_:
-	type = JsonType::NUMBER_;
-	number_value = other.number_value;
-	break;
-      case JsonType::STRING_:
-	type = JsonType::STRING_;
-	string_value = new String;
-	string_value = other.string_value;
-	break;
-      case JsonType::BOOLEAN_:
-	type = JsonType::BOOLEAN_;
-	bool_value = other.bool_value;
-	break;
-      case JsonType::ARRAY_:
-	// type = JsonType::ARRAY_;
-	// array_value = new Array;
-	// array_value = other.array_value;
-	break;
-      case JsonType::OBJECT_:
-	type = JsonType::OBJECT_;
-	obj_value = new Object;
-	obj_value = other.obj_value;
-	break;
-      case JsonType::NULL_:
-	type = JsonType::NULL_;
-	break;
-      }
+      set(other);
     }
   }
 
@@ -103,6 +77,22 @@ namespace jsonlite
       return true;
     }
 
+    if(helper::parse(input)) {
+      value.type = JsonType::NULL_;
+      return true;
+    }
+
+    if(input.peek() == '[') {
+      value.array_value = new Array;
+      if(value.array_value->parse(input)) {
+	value.type = JsonType::ARRAY_;
+	return true;
+      }
+
+      delete value.array_value;
+      value.array_value = nullptr;
+    }
+
     value.obj_value = new Object;
     if(value.obj_value->parse(input)) {
       value.type = JsonType::OBJECT_;
@@ -113,63 +103,58 @@ namespace jsonlite
     value.obj_value = nullptr;
     return false;
   }
-  
-  // template<typename T>
-  // void Value::set(const T& value) {
-  //   if(IsByte<T>::value) {
-  //     type = JsonType::NUMBER_;
-  //     number_value._byte = static_cast<Byte>(value);
-  //   }
-  //   else if(IsUByte<T>::value) {
-  //     type = JsonType::NUMBER_;;
-  //     number_value._ubyte = static_cast<UByte>(value);
-  //   }
-  //   else if(IsInt16<T>::value) {
-  //     type = JsonType::NUMBER_;
-  //     number_value._int_16 = static_cast<Int16>(value);
-  //   }
-  //   else if(IsUInt16<T>::value) {
-  //     type = JsonType::NUMBER_;
-  //     number_value._uint_16 = static_cast<UInt16>(value);
-  //   }
-  //   else if(IsInt32<T>::value) {
-  //     type = JsonType::NUMBER_;
-  //     number_value._int_32 = static_cast<Int32>(value);
-  //   }
-  //   else if(IsUInt32<T>::value) {
-  //     type = JsonType::NUMBER_;
-  //     number_value._uint_32 = static_cast<UInt32>(value);
-  //   }
-  //   else if(IsInt64<T>::value) {
-  //     type = JsonType::NUMBER_;
-  //     number_value._int_64 = static_cast<Int64>(value);
-  //   }
-  //   else if(IsUInt64<T>::value) {
-  //     type = JsonType::NUMBER_;
-  //     number_value._uint_64 = static_cast<UInt64>(value);
-  //   }
-  //   else if(IsDouble<T>::value) {
-  //     type = JsonType::NUMBER_;
-  //     number_value._double = static_cast<Double>(value);
-  //   }
-  //   else if(IsString<T>::value) {
-  //     type = JsonType::STRING_; 
-  //     string_value = new String;
-  //     *string_value = value;
-  //   }
-  //   // else if(IsObject<T>::value) {
-  //   //   type = JsonType::OBJECT_;
-  //   //   obj_value = new Object;
-  //   //   *obj_value = value;
-  //   // }
-  //   // else if(IsArray<T>::value) {
-  //   //   type = JsonType::ARRAY_;
-  //   //   array_value = new Array;
-  //   //   *array_value = value;
-  //   // }
-  //   else {
-  //     // TODO: add custom exceptions
-  //     //throw ValueTypeException{};
-  //   }
-  // }
+
+  void Value::set(const String& value) {
+    type = JsonType::STRING_;
+    string_value = new String;
+    *string_value = value;
+  }
+
+  void Value::set(const Number& value) {
+    type = JsonType::NUMBER_;
+    number_value = value;
+  }
+
+  void Value::set(const Boolean& value) {
+    type = JsonType::BOOLEAN_;
+    bool_value = value;
+  }
+
+  void Value::set(const Array& value) {
+    type = JsonType::ARRAY_;
+    array_value = new Array;
+    *array_value = value;
+  }
+
+  void Value::set(const Object& value) {
+    type = JsonType::OBJECT_;
+    obj_value = new Object;
+    *obj_value = value;
+  }
+
+  void Value::set(const Value& value) {
+    switch(value.type) {
+    case JsonType::NUMBER_:
+      set(value.number_value);
+      break;
+    case JsonType::STRING_:
+      set(*value.string_value);
+      break;
+    case JsonType::BOOLEAN_:
+      set(value.bool_value);
+      break;
+    case JsonType::ARRAY_:
+      set(*value.array_value);
+      break;
+    case JsonType::OBJECT_:
+      set(*value.obj_value);
+      break;
+    case JsonType::NULL_:
+      type = JsonType::NULL_;
+      break;
+    default:
+      type = JsonType::INVALID_;
+      break;
+    }
+  }
 }

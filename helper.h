@@ -180,6 +180,9 @@ namespace jsonlite
 	    lastCh = ch;
 	  }
 	}
+	else {
+	  input.putback(ch);
+	}
       }
 
       input >> std::ws;
@@ -211,51 +214,6 @@ namespace jsonlite
     inline bool parse(std::istream& input) {
       return match(input, "null");
     }
-
-    // inline bool parse(std::istream& input, Number& value) {
-    //   input >> std::ws;
-
-    //   std::streampos rollbackPos = input.tellg();
-    //   // no exception will be thrown if error state flag bieng changed.
-    //   input.exceptions(std::istream::goodbit);
-
-    //   long double num;
-    //   input >> num;
-
-    //   if(input.fail()) {
-    // 	input.clear();
-    // 	input.seekg(rollbackPos);
-    // 	return false;
-    //   }
-      
-    //   // set number value
-    //   if(in_range<Byte>(num)) {
-    // 	value._byte = static_cast<Byte>(num);
-    //   }
-    //   else if(in_range<Int16>(num)) {
-    // 	value._int_16 = static_cast<Int16>(num);
-    //   }
-    //   else if(in_range<UInt16>(num)) {
-    // 	value._uint_16 = static_cast<UInt16>(num);
-    //   }
-    //   else if(in_range<Int32>(num)) {
-    // 	value._int_32 = static_cast<Int32>(num);
-    //   }
-    //   else if(in_range<UInt32>(num)) {
-    // 	value._uint_32 = static_cast<UInt32>(num);
-    //   }
-    //   else if(in_range<Int64>(num)) {
-    // 	value._int_64 = static_cast<Int64>(num);
-    //   }
-    //   else if(in_range<UInt64>(num)) {
-    // 	value._uint_64 = static_cast<UInt64>(num);
-    //   }
-    //   else if(in_range<Double>(num)) {
-    // 	value._double = static_cast<Double>(num);
-    //   }
-      
-    //   return true;
-    // }
 
     template<typename T>
     bool in_range(long double num) {
