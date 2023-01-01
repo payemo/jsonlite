@@ -9,98 +9,101 @@ using namespace jsonlite;
 int main() {
 	{
 		Value v;
-		auto str = String("Eugene");
-		v.set(str);
-		TEST(v.is<String>());
-		TEST(v.get<String>() == "Eugene");
-	}
-	{
-		Value v;
 		string test_str("\"\\u000e\\u0002\"");
-		string result;
 		stringstream input(test_str);
-		TEST(helper::parse(input, result));
-		TEST(result == "\xe\x2");
+		TEST(v.parse(input));
+		TEST(v.is<String>());
+		TEST(v.get<String>() == "\xe\x2");
 	}
 	{
 		Value v;
 		string test_str("\"test_key\"");
-		string result;
 		stringstream input(test_str);
-		TEST(helper::parse(input, result));
-		TEST(result == "test_key");
+		TEST(v.parse(input));
+		TEST(v.get<String>() == "test_key");
 	}
 	{
 		Value v;
 		string test_str("\"\"");
-		string result;
 		stringstream input(test_str);
-		TEST(helper::parse(input, result));
+		TEST(v.parse(input));
+		TEST(v.is<String>() && v.get<String>() == "");
 	}
 	{
 		Value v;
 		string str("test_key");
-		string res;
 		stringstream input(str);
-
-		helper::parse(input, res);
-		TEST(res == "");
+		v.parse(input);
+		TEST(v.empty());
 	}
 	// test numbers
 	{
 		string teststr("-6");
 		stringstream input(teststr);
 		Value v;
-		Number n;
-		TEST(helper::parse(input, n));
-		TEST(n == -6);
+		TEST(v.parse(input));
+		TEST(v.get<Number>() == -6);
 	}
 	{
 		string teststr("1023.1929254849277");
 		stringstream input(teststr);
 		Value v;
-		Number n;
-		TEST(helper::parse(input, n));
-		TEST(n == 1023.1929254849277);
+		TEST(v.parse(input));
+		TEST(v.get<Number>() == 1023.1929254849277);
 	}
 	{
 		string teststr("3.402823E+38");
 		stringstream input(teststr);
 		Value v;
-		Number n;
-		TEST(helper::parse(input, n));
-		TEST(n == 3.402823E+38);
+		TEST(v.parse(input));
+		TEST(v.get<Number>() == 3.402823E+38);
 	}
 	{
 		string teststr("4.2e+7");
 		stringstream input(teststr);
 		Value v;
-		Number n;
-		TEST(helper::parse(input, n));
-		TEST(n == 42000000);
+		TEST(v.parse(input));
+		TEST(v.get<Number>() == 42000000);
 	}
 	{
 		string teststr("4.2e+,");
 		stringstream input(teststr);
 		Value v;
-		Number n(-1);
-		helper::parse(input, n);
-		TEST(n == -1);
+		v.parse(input);
+		TEST(v.empty());
 	}
 	// parse boolean
 	{
 		string teststr("true");
 		stringstream input(teststr);
-		Boolean b;
-		TEST(helper::parse(input, b));
-		TEST(b == true);
+		Value v;
+		TEST(v.parse(input));
+		TEST(v.get<Boolean>() == true);
 	}
 	{
 		string teststr("\ttrue   ");
 		stringstream input(teststr);
-		Boolean b;
-		TEST(helper::parse(input, b));
-		TEST(b == true);
+		Value v;
+		TEST(v.parse(input));
+		TEST(v.get<Boolean>() == true);
+	}
+	// test object
+	{
+		string teststr(
+				"{"
+				"  \"foo\" : 1,"
+				"  \"bar\" : false,"
+				"  \"person\" : {\"name\" : \"GWB\", \"age\" : 60},"
+				"}"
+		);
+		istringstream input(teststr);
+		Object o;
+		TEST(o.parse(input));
+		TEST(1 == o.get<Number>("foo"));
+		TEST(o.has<Boolean>("bar"));
+		TEST(o.has<Object>("person"));
+		TEST(o.get<Object>("person").has<Number>("age"));
+		TEST(!o.has<Number>("data"));
 	}
 	return 0;
 }

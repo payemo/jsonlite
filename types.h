@@ -4,7 +4,7 @@
 
 namespace jsonlite
 {
-  enum class JsonType { STRING_, NUMBER_, OBJECT_, ARRAY_, BOOLEAN_, NULL_ };
+  enum class JsonType { STRING_, NUMBER_, OBJECT_, ARRAY_, BOOLEAN_, NULL_, INVALID_ };
 
   typedef char Byte;
   typedef unsigned char UByte;

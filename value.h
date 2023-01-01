@@ -26,19 +26,16 @@ namespace jsonlite
     template<typename T> T& get();
     template<typename T> const T& get() const;
 
-    template<typename T>
-    void set(const T& value) {};
+    // void set(const String& value) {
+    //   type = JsonType::STRING_;
+    //   string_value = new String;
+    //   *string_value = value;
+    // }
 
-    void set(const String& value) {
-      type = JsonType::STRING_;
-      string_value = new String;
-      *string_value = value;
-    }
-
-    void set(const Number& value) {
-      type = JsonType::NUMBER_;
-      number_value = value;
-    }
+    // void set(const Number& value) {
+    //   type = JsonType::NUMBER_;
+    //   number_value = value;
+    // }
 
     // void set(const Byte& value) {
     //   type = JsonType::NUMBER_;
@@ -85,13 +82,20 @@ namespace jsonlite
     //   number_value._double = static_cast<Double>(value);
     // }
 
-    void set(const Boolean& value) {
-      type = JsonType::BOOLEAN_;
-      bool_value = value;
-    }
+    // void set(const Boolean& value) {
+    //   type = JsonType::BOOLEAN_;
+    //   bool_value = value;
+    // }
+
+    /*void set(const Object& value) {
+      type = JsonType::OBJECT_;
+      obj_value = new Object;
+      *obj_value = value;
+    }*/
 
     JsonType type;
-    
+
+  private:
     union
     {
       String* string_value;
@@ -100,8 +104,7 @@ namespace jsonlite
       Object* obj_value;
       Array* array_value;
     };
-
-  private:
+    
     static bool parse(std::istream& input, Value& value);
   };
 
