@@ -30,19 +30,36 @@ namespace jsonlite
     template<typename T> const T& get() const;
 
     template<typename T>
-    void set(const T&) {
-      clear();
-      type = JsonType::INVALID_;
-    }
+    void set(const T& t) {};
     
     void set(const String& value);
+
     void set(const Number& value);
+
     void set(const Boolean& value);
+
     void set(const Array& value);
+
     void set(const Object& value);
+
     void set(const Value& value);
 
     JsonType type;
+
+    // operators overloading
+    template<typename T>
+    Value& operator <<(const T& value) {
+      set(value);
+      return *this;
+    }
+
+    template<typename T>
+    Value& operator =(const Value& value) {
+      set(value);
+      return *this;
+    }
+
+    friend std::ostream& operator <<(std::ostream& os, const Value& value);
 
   private:
     union

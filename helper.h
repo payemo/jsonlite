@@ -6,6 +6,7 @@
 #include <limits>
 #include <cctype>
 #include <string>
+#include <iomanip>
 
 #define JSONLITE_ASSERT(...) \
     jsonlite::helper::try_assert(__FILE__, __LINE__, #__VA_ARGS__, bool(__VA_ARGS__));
@@ -218,6 +219,49 @@ namespace jsonlite
     template<typename T>
     bool in_range(long double num) {
       return std::numeric_limits<T>::min() <= num && num <= std::numeric_limits<T>::max();
+    }
+
+    static std::ostream& streamString(std::ostream& os, const std::string& string) {
+      os << '"';
+      String::const_iterator b = string.begin(), e = string.end();
+      for(; b != e; ++b) {
+	switch(*b) {
+	case '"':
+	  os << "\\\"";
+	  break;
+	case '\\':
+	  os << "\\\\";
+	  break;
+	case '/':
+	  os << "\\/";
+	  break;
+	case '\b':
+	  os << "\\b";
+	  break;
+	case '\f':
+	  os << "\\f";
+	  break;
+	case '\n':
+	  os << "\\n";
+	  break;
+	case '\r':
+	  os << "\\r";
+	  break;
+	case '\t':
+	  os << "\\t";
+	  break;
+	default:
+	  if(*b < 32) {
+	    os << "\\u" << std::hex << std::setw(4) <<
+	      std::setfill('0') << static_cast<int>(*b) << std::dec << std::setw(0);
+	  }
+	  else {
+	    os << *b;
+	  }
+	}
+      }
+      os << '"';
+      return os;
     }
   }
 }

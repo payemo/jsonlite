@@ -86,4 +86,47 @@ namespace jsonlite
   void Array::internalAdd(const Value& value) {
     values.push_back(new Value(value));
   }
+
+  Array::constIterator Array::begin() const { return values.begin(); }
+  Array::constIterator Array::end() const { return values.end(); }
+
+  Array& Array::operator <<(const Array& other) {
+    internalAdd(other);
+    return *this;
+  }
+
+  Array& Array::operator <<(const Value& value) {
+    internalAdd(value);
+    return *this;
+  }
+
+  Array& Array::operator =(const Array& other) {
+    if(this != &other) {
+      clear();
+      internalAdd(other);
+    }
+    return *this;
+  }
+
+  Array& Array::operator =(const Value& value) {
+    clear();
+    internalAdd(value);
+    return *this;
+  }
+
+  std::ostream& operator <<(std::ostream& os, const Array& array) {
+    using namespace jsonlite;
+    using namespace helper;
+    
+    os << "[";
+    Array::constIterator beg = array.begin(), end = array.end();
+    while(beg != end) {
+      os << *(*beg);
+      ++beg;
+
+      if(beg != end)
+	os << ", ";
+    }
+    return os << "]";
+  }
 }

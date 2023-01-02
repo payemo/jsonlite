@@ -15,6 +15,7 @@ namespace jsonlite
     bool empty() const;
 
     typedef std::vector<Value*> container;
+    typedef container::const_iterator constIterator;
 
     void clear();
 
@@ -26,6 +27,17 @@ namespace jsonlite
 
     template<typename T> T& get(UInt32 index);
     template<typename T> const T& get(UInt32 index) const;
+
+    constIterator begin() const;
+    constIterator end() const;
+
+    // operators overload
+    Array& operator <<(const Array& other);
+    Array& operator <<(const Value& value);
+    Array& operator =(const Array& other);
+    Array& operator =(const Value& value);
+
+    friend std::ostream& operator <<(std::ostream& os, const Array& value);
 
   private:
     static bool parse(std::istream& input, Array& array);

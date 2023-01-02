@@ -104,34 +104,40 @@ namespace jsonlite
     return false;
   }
 
+  //template<>
   void Value::set(const String& value) {
     type = JsonType::STRING_;
     string_value = new String;
     *string_value = value;
   }
 
+  //template<>
   void Value::set(const Number& value) {
     type = JsonType::NUMBER_;
     number_value = value;
   }
 
+  //template<>
   void Value::set(const Boolean& value) {
     type = JsonType::BOOLEAN_;
     bool_value = value;
   }
 
+  //template<>
   void Value::set(const Array& value) {
     type = JsonType::ARRAY_;
     array_value = new Array;
     *array_value = value;
   }
 
+  //template<>
   void Value::set(const Object& value) {
     type = JsonType::OBJECT_;
     obj_value = new Object;
     *obj_value = value;
   }
 
+  //template<>
   void Value::set(const Value& value) {
     switch(value.type) {
     case JsonType::NUMBER_:
@@ -156,5 +162,32 @@ namespace jsonlite
       type = JsonType::INVALID_;
       break;
     }
+  }
+
+  std::ostream& operator <<(std::ostream& os, const Value& value) {
+    if(value.is<String>()) {
+      return helper::streamString(os, value.get<String>());
+    }
+    else if(value.is<Number>()) {
+      return os << value.get<Number>();
+    }
+    else if(value.is<Boolean>()) {
+      if(value.get<Boolean>()) {
+	return os << "true";
+      }
+      else {
+	return os << "false";
+      }
+    }
+    else if(value.is<Nullable>()) {
+      return os << "null";
+    }
+    else if(value.is<Object>()) {
+      return os << value.get<Object>();
+    }
+    else if(value.is<Array>()) {
+      return os << value.get<Array>();
+    }
+    return os;
   }
 }

@@ -15,6 +15,7 @@ namespace jsonlite
     ~Object();
 
     typedef std::map<std::string, Value*> container;
+    typedef container::const_iterator constIterator;
 
     void clear();
     
@@ -29,9 +30,22 @@ namespace jsonlite
     template<typename T> bool has(const std::string key) const;
 
     template<typename T> T& get(const std::string key) const;
+
+    constIterator beginValues() const;
+    constIterator endValues() const;
+
+    // operators overload
+    Object& operator <<(const Value& value);
+    Object& operator <<(const Object& value);
+    Object& operator =(const Object& value);
+
+    friend std::ostream& operator <<(std::ostream& os, const Object& value);
   private:
+    std::string osKey;
     container values;
 
+    void set(const Object& other);
+    void set(const std::string& key, const Value& value);
     static bool parse(std::istream& input, Object& object);
   };
 

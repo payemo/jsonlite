@@ -7,24 +7,11 @@ namespace jsonlite
   Object::~Object() { clear(); }
 
   Object::Object(const Object& other) {
-    if(this != &other) {
-      container::const_iterator it = other.values.begin();
-      for(; it != other.values.end(); ++it) {
-	auto found = values.find(it->first);
-	if(found != values.end()) {
-	  delete found->second;
-	}
-	values[it->first] = new Value(*(it->second));
-      }
-    }
+    set(other);
   }
   
   Object::Object(const std::string key, const Value& value) {
-    auto found = values.find(key);
-    if(found != values.end()) {
-      delete found->second;
-    }
-    values[key] = new Value(value);
+    set(key, value);
   }
 
   void Object::clear() {
@@ -85,5 +72,77 @@ namespace jsonlite
     } while(helper::match(input, ","));
 
     return helper::match(input, "}");
+  }
+
+  void Object::set(const Object& other) {
+    osKey.clear();
+    if(this != &other) {
+      container::const_iterator it = other.values.begin();
+      for(; it != other.values.end(); ++it) {
+	auto found = values.find(it->first);
+	if(found != values.end()) {
+	  delete found->second;
+	}
+	values[it->first] = new Value(*(it->second));
+      }
+    }
+    else {
+      set(Object(*this));
+    }
+  }
+
+  void Object::set(const std::string& key, const Value& value) {
+    osKey.clear();
+    auto found = values.find(key);
+    if(found != values.end()) {
+      delete found->second;
+    }
+    values[key] = new Value(value);
+  }
+
+  Object& Object::operator <<(const Value& value) {
+    if(osKey.empty() && value.is<String>()) {
+      osKey = value.get<String>();
+    }
+    else {
+      set(Object(osKey, value));
+      osKey.clear();
+    }
+    return *this;
+  }
+
+  Object& Object::operator <<(const Object& value) {
+    set(Object(std::string(osKey), value));
+    osKey.clear();
+    return *this;
+  }
+
+  Object& Object::operator =(const Object& value) {
+    osKey.clear();
+    if(this != &value) {
+      clear();
+      set(value);
+    }
+    return *this;
+  }
+
+  Object::constIterator Object::beginValues() const { return values.begin(); }
+  Object::constIterator Object::endValues() const { return values.end(); }
+
+  std::ostream& operator <<(std::ostream& os, const Object& value) {
+    using namespace jsonlite;
+    using namespace helper;
+    
+    os << '}';
+    auto beg = value.beginValues(), end = value.endValues();
+    for(; beg != end;) {
+      streamString(os, beg->first);
+      os << ": " << *beg->second;
+
+      ++beg;
+      if(beg != end)
+	os << ", ";
+    }
+    return os << "}";
   }
 }

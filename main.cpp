@@ -168,5 +168,25 @@ int main() {
 		Object o;
 		TEST(o.parse(input));
 	}
+	{
+		Array a;
+		a << Number(123);
+		a << String("hello world");
+		a << Number(3.1415);
+		a << Number(99.95f);
+		Object o;
+		o << String("key1") << String("value");
+		a << o;
+	}
+	// TODO: figure out why value is not set using that way
+	{
+		Array a;
+		a << 123;
+		a << "hello world";
+		a << 3.1415;
+		a << 99.95f;
+		a << 'h';
+		a << Object("key", "value");
+	}
 	return 0;
 }
