@@ -104,40 +104,34 @@ namespace jsonlite
     return false;
   }
 
-  //template<>
   void Value::set(const String& value) {
     type = JsonType::STRING_;
     string_value = new String;
     *string_value = value;
   }
 
-  //template<>
   void Value::set(const Number& value) {
     type = JsonType::NUMBER_;
     number_value = value;
   }
 
-  //template<>
   void Value::set(const Boolean& value) {
     type = JsonType::BOOLEAN_;
     bool_value = value;
   }
 
-  //template<>
   void Value::set(const Array& value) {
     type = JsonType::ARRAY_;
     array_value = new Array;
     *array_value = value;
   }
 
-  //template<>
   void Value::set(const Object& value) {
     type = JsonType::OBJECT_;
     obj_value = new Object;
     *obj_value = value;
   }
 
-  //template<>
   void Value::set(const Value& value) {
     switch(value.type) {
     case JsonType::NUMBER_:
@@ -161,6 +155,50 @@ namespace jsonlite
     default:
       type = JsonType::INVALID_;
       break;
+    }
+  }
+
+  std::string Value::getJsonString(int depth, const Value& value) const {
+    std::stringstream ss;
+    std::string tab(depth, '\t');
+    std::string lineEnd(",\n");
+
+    switch(value.type) {
+    case JsonType::STRING_:
+      ss << '\"' + helper::escapeString(*value.string_value) + '\"';
+      return ss.str() + lineEnd;
+    case JsonType::NUMBER_:
+      ss << std::setprecision(std::numeric_limits<long double>::digits10 + 1);
+      ss << value.number_value;
+      return ss.str() + lineEnd;
+    case JsonType::BOOLEAN_:
+      ss << (value.bool_value ? "true" : "false");
+      return ss.str() + lineEnd;
+    case JsonType::ARRAY_:
+      {
+	ss << "[\n";
+	auto it = value.array_value->begin(), end = value.array_value->end();
+	for(; it != end; ++it) {
+	  ss << getJsonString(depth + 1, **it);
+	}
+	return helper::removeLastComma(ss.str()) + tab + "] " + lineEnd;
+      }
+    case JsonType::OBJECT_:
+      {
+	ss << "{\n";
+
+        auto it = value.obj_value->beginValues(), end = value.obj_value->endValues();
+	for(; it != end; ++it) {
+	  // parse key value first
+	  ss << tab << '\"' << helper::escapeString(it->first) << '\"' << ": ";
+	  ss << getJsonString(depth + 1, *it->second);
+	}
+	return helper::removeLastComma(ss.str()) + "} " + lineEnd;
+      }
+    case JsonType::NULL_:
+    default:
+      ss << "null";
+      return ss.str() + lineEnd;
     }
   }
 

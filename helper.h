@@ -263,5 +263,21 @@ namespace jsonlite
       os << '"';
       return os;
     }
+
+    static std::string escapeString(const std::string& input) {
+      std::string output;
+
+      return output;
+    }
+
+    static std::string removeLastComma(const std::string& input) {
+      std::string res(input);
+      size_t size = res.size();
+
+      if(size > 2 && res[size] == ',')
+	res[size] = ' ';
+
+      return res;
+    }
   }
 }

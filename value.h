@@ -3,6 +3,9 @@
 #include "types.h"
 #include "helper.h"
 #include <iostream>
+#include <sstream>
+#include <iomanip>
+#include <limits>
 
 namespace jsonlite
 {
@@ -33,16 +36,15 @@ namespace jsonlite
     void set(const T& t) {};
     
     void set(const String& value);
-
     void set(const Number& value);
-
     void set(const Boolean& value);
-
     void set(const Array& value);
-
     void set(const Object& value);
-
     void set(const Value& value);
+    void set(const Nullable& value);
+    void set(const std::nullptr_t& value);
+
+    std::string getJsonString(int depth, const Value& value) const;
 
     JsonType type;
 

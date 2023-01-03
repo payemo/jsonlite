@@ -129,6 +129,16 @@ namespace jsonlite
   Object::constIterator Object::beginValues() const { return values.begin(); }
   Object::constIterator Object::endValues() const { return values.end(); }
 
+  std::string Object::json() const {
+    Value v(*this);
+    
+    // Do process
+    std::string json = v.getJsonString(0, v);
+    
+    v.clear();
+    return json;
+  }
+  
   std::ostream& operator <<(std::ostream& os, const Object& value) {
     using namespace jsonlite;
     using namespace helper;

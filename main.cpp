@@ -170,6 +170,7 @@ int main() {
 	}
 	{
 		Array a;
+		a << 122;
 		a << Number(123);
 		a << String("hello world");
 		a << Number(3.1415);
@@ -177,6 +178,18 @@ int main() {
 		Object o;
 		o << String("key1") << String("value");
 		a << o;
+	}
+	{
+		Array a;
+		a << Object("key", "value") << Object("key2", "value2");
+
+		Object o1 = Object("question", String("Which one is correct team name in NBA?"));
+		o1 << String("answer") << String("Huston Rocket");
+
+		Object o3;
+		o3 << String("q1") << o1;
+
+		string res = o1.json();
 	}
 	// TODO: figure out why value is not set using that way
 	{

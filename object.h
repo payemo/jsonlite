@@ -31,6 +31,8 @@ namespace jsonlite
 
     template<typename T> T& get(const std::string key) const;
 
+    std::string json() const;
+
     constIterator beginValues() const;
     constIterator endValues() const;
 
@@ -46,6 +48,7 @@ namespace jsonlite
 
     void set(const Object& other);
     void set(const std::string& key, const Value& value);
+
     static bool parse(std::istream& input, Object& object);
   };
 
