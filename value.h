@@ -36,6 +36,7 @@ namespace jsonlite
     void set(const T& t) {};
     
     void set(const String& value);
+    void set(const char* value);
     void set(const Number& value);
     void set(const Boolean& value);
     void set(const Array& value);

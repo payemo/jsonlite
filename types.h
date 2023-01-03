@@ -22,5 +22,5 @@ namespace jsonlite
   typedef bool Boolean;
   class Object;
   class Array;
-  class Nullable{};
+  struct Nullable{};
 }

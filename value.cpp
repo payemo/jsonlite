@@ -109,7 +109,11 @@ namespace jsonlite
     string_value = new String;
     *string_value = value;
   }
-
+  
+  void Value::set(const char* value) {
+    set(std::string(value));
+  }
+  
   void Value::set(const Number& value) {
     type = JsonType::NUMBER_;
     number_value = value;
@@ -132,6 +136,10 @@ namespace jsonlite
     *obj_value = value;
   }
 
+  void Value::set(const Nullable& value) {
+    type = JsonType::NULL_;
+  }
+  
   void Value::set(const Value& value) {
     switch(value.type) {
     case JsonType::NUMBER_:
@@ -150,7 +158,7 @@ namespace jsonlite
       set(*value.obj_value);
       break;
     case JsonType::NULL_:
-      type = JsonType::NULL_;
+      set(Nullable());
       break;
     default:
       type = JsonType::INVALID_;
