@@ -143,7 +143,7 @@ namespace jsonlite
     using namespace jsonlite;
     using namespace helper;
     
-    os << '}';
+    os << '{';
     auto beg = value.beginValues(), end = value.endValues();
     for(; beg != end;) {
       streamString(os, beg->first);
