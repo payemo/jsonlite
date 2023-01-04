@@ -136,7 +136,7 @@ namespace jsonlite
     std::string json = v.getJsonString(0, v);
     
     v.clear();
-    return json;
+    return helper::removeLastComma(json);
   }
   
   std::ostream& operator <<(std::ostream& os, const Object& value) {

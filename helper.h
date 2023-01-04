@@ -265,8 +265,33 @@ namespace jsonlite
     }
 
     static std::string escapeString(const std::string& input) {
-      std::string output;
+      static std::string map[256], *once;
 
+      if(!once) {
+	for(int i = 32; i < 256; ++i)
+	  map[i] = std::string() + char(i);
+
+	for(int i = 0; i < 32; ++i) {
+	  std::stringstream ss;
+	  ss << "\\u" << std::hex << std::setw(4) << std::setfill('0') << i;
+	  map[i] = ss.str();
+	}
+
+	map[char('"')] = "\\\"";
+	map[char('\\')] = "\\\\";
+	map[char('/')] = "\\/";
+	map[char('\b')] = "\\b";
+	map[char('\f')] = "\\f";
+	map[char('\n')] = "\\n";
+	map[char('\r')] = "\\r";
+	map[char('\t')] = "\\t";
+      }
+
+      std::string output;
+      output.reserve(input.size() * 2 + 2);
+      for(std::string::const_iterator it = input.begin(); it != input.end(); ++it)
+	output += map[char(*it)];
+      
       return output;
     }
 
@@ -274,8 +299,8 @@ namespace jsonlite
       std::string res(input);
       size_t size = res.size();
 
-      if(size > 2 && res[size] == ',')
-	res[size] = ' ';
+      if(size > 2 && res[size - 2] == ',')
+	res[size - 2] = ' ';
 
       return res;
     }

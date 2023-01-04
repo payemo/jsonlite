@@ -169,19 +169,18 @@ namespace jsonlite
   std::string Value::getJsonString(int depth, const Value& value) const {
     std::stringstream ss;
     std::string tab(depth, '\t');
-    std::string lineEnd(",\n");
 
     switch(value.type) {
     case JsonType::STRING_:
       ss << '\"' + helper::escapeString(*value.string_value) + '\"';
-      return ss.str() + lineEnd;
+      return ss.str() + ",\n";
     case JsonType::NUMBER_:
       ss << std::setprecision(std::numeric_limits<long double>::digits10 + 1);
       ss << value.number_value;
-      return ss.str() + lineEnd;
+      return ss.str() + ",\n";
     case JsonType::BOOLEAN_:
       ss << (value.bool_value ? "true" : "false");
-      return ss.str() + lineEnd;
+      return ss.str() + ",\n";
     case JsonType::ARRAY_:
       {
 	ss << "[\n";
@@ -189,7 +188,7 @@ namespace jsonlite
 	for(; it != end; ++it) {
 	  ss << getJsonString(depth + 1, **it);
 	}
-	return helper::removeLastComma(ss.str()) + tab + "] " + lineEnd;
+	return helper::removeLastComma(ss.str()) + tab + "]" ",\n";
       }
     case JsonType::OBJECT_:
       {
@@ -201,12 +200,12 @@ namespace jsonlite
 	  ss << tab << '\"' << helper::escapeString(it->first) << '\"' << ": ";
 	  ss << getJsonString(depth + 1, *it->second);
 	}
-	return helper::removeLastComma(ss.str()) + "} " + lineEnd;
+	return helper::removeLastComma(ss.str()) + tab + "}" ",\n";
       }
     case JsonType::NULL_:
     default:
       ss << "null";
-      return ss.str() + lineEnd;
+      return ss.str() + ",\n";
     }
   }
 

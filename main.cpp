@@ -170,7 +170,9 @@ int main() {
 	}
 	{
 		Array a;
-		a << 122;
+		a << Nullable();
+		a << "hi";
+		a << 122.L;
 		a << Number(123);
 		a << String("hello world");
 		a << Number(3.1415);
@@ -189,7 +191,7 @@ int main() {
 		Object o3;
 		o3 << String("q1") << o1;
 
-		string res = o1.json();
+		string res = o3.json();
 	}
 	// TODO: figure out why value is not set using that way
 	{
